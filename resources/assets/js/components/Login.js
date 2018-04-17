@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import {polyfill} from 'es6-promise';
 import fetch from 'isomorphic-fetch';
-import { parseJSON } from './../authentication/auth.js';
+import { parseJSON, httpUrl } from './../authentication/auth.js';
 
 class Login extends Component {
 	constructor(props){
@@ -48,7 +48,7 @@ class Login extends Component {
           body:JSON.stringify(data)
         }
      
-		fetch('http://localhost/rlaravel/public/login', options)
+		fetch(httpUrl+'/login', options)
 		.then(parseJSON)
 		.then((response)=>{
 			if(response.status !== undefined && response.status == "success") {
@@ -80,13 +80,13 @@ class Login extends Component {
 								<center>Email :</center>
 								</div>
 								<div className="col-md-8">
-								<input type="text" ref="email" name="email"/>
+								<input type="text" onKeyDown={(event) => {if(event.which == 13){this._handleLogin()}}} ref="email" name="email"/>
 								</div>
 								<div className="col-md-4">
 								<center>Password :</center>
 								</div>
 								<div className="col-md-8">
-								<input type="password" ref="pass" name="pass"/>
+								<input type="password" onKeyDown={(event) => {if(event.which == 13){this._handleLogin()}}} ref="pass" name="pass"/>
 								</div>
 								<div className="col-md-4">
 								&nbsp;

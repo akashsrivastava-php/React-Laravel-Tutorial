@@ -15,3 +15,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::post('/login', 'WsController@login');
+Route::post('/register', 'WsController@register');
+Route::post('/edit', 'WsController@edit');
+Route::get('/view', 'WsController@view');
+Route::post('/update', 'WsController@update');
+Route::post('/delete', 'WsController@delete');

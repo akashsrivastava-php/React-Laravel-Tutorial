@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
+export const httpUrl = 'http://localhost/rlaravel/public';
+
 export function checkAlreadyLogin(comp1, comp2){
 	var token = sessionStorage.getItem('token');
 	if(token!=null && token.length>0){

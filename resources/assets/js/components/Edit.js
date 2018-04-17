@@ -4,30 +4,20 @@ import {polyfill} from 'es6-promise';
 import fetch from 'isomorphic-fetch';
 import { parseJSON, httpUrl } from './../authentication/auth.js';
 
-class Home extends Component {
+class Edit extends Component {
 	constructor(props){
 		super(props);
 
 		this.state = {
 			err : '',
-			error: {}
+			error: {},
+			name: '',
+			email: ''
 		}
 
 	this._handleLogout = this._handleLogout.bind(this);
-	this._handleRegister = this._handleRegister.bind(this);
-	}
-
-	_handleRegister(){
-
-		var email = this.refs.email.value;
-		var pass = this.refs.pass.value;
-		var name = this.refs.name.value;
-
-		if(email.length > 0 && pass.length > 0 && name.length > 0){
-			this.ajaxCall();
-		}else{
-			this.setState({err:'Invalid email or password'});
-		}
+	this._handleUpdate = this._handleUpdate.bind(this);
+	this.inputVal = this.inputVal.bind(this);
 	}
 
 	_handleLogout(){
@@ -35,14 +25,15 @@ class Home extends Component {
 		this.props.history.push('/');
 	}
 
-	ajaxCall(){
+	_handleUpdate(){
 
 		const token = $("#csrf_token").attr('content');
 
 		const data = { 
-						email : this.refs.email.value,
-						pass : this.refs.pass.value,
+						id : (this.props.location.pathname).match(/\d+/),
 						name : this.refs.name.value,
+						email : this.refs.email.value,
+						pass : this.refs.pass.value
 		 		     }
 
 		const options = {
@@ -57,10 +48,11 @@ class Home extends Component {
           body:JSON.stringify(data)
         }
      
-		fetch(httpUrl+'/register', options)
+		fetch(httpUrl+'/update', options)
 		.then(parseJSON)
 		.then((response)=>{
 			if(response.status !== undefined && response.status == "success") {
+					//console.log(response.response);
 					this.props.history.push('/home');
 
 			} else {
@@ -68,13 +60,58 @@ class Home extends Component {
 			}
 			return Promise.resolve();
 		})
+
+	}
+
+	inputVal(event){
+
+		this.setState({ [event.target.name] : [event.target.value] });
+
+	}
+
+
+	componentDidMount(){
+
+		const token = $("#csrf_token").attr('content');
+
+		const data = { 
+						id : (this.props.location.pathname).match(/\d+/)
+		 		     }
+
+		const options = {
+                method: 'POST',
+                //mode: "cors",
+                credentials: "same-origin",
+                headers: {
+                 'Content-Type': 'application/json',
+                 'Accept': 'application/json',
+                 'X-CSRF-TOKEN': token
+          },
+          body:JSON.stringify(data)
+        }
+     
+		fetch(httpUrl+'/edit', options)
+		.then(parseJSON)
+		.then((response)=>{
+			if(response.status !== undefined && response.status == "success") {
+					//console.log(response.response);
+					this.setState({name:response.response[0].name});
+					this.setState({email:response.response[0].email});
+
+			} else {
+				this.setState({err:response.message});
+			}
+			return Promise.resolve();
+		})
+	
 	}
 
 	render() {
+
 		return(
 				<div className="container">
-				<center><h2>Add</h2></center>
-				<button type="button" onClick={()=>{this.props.history.push('/')}}>View</button>
+				<center><h2>Edit</h2></center>
+				<button type="button" onClick={()=>{this.props.history.push('/home')}}>View</button>
 				<button type="button" onClick={this._handleLogout}>Logout</button>
 				<br/>
 
@@ -94,13 +131,13 @@ class Home extends Component {
 								<center>Name :</center>
 								</div>
 								<div className="col-md-8">
-								<input type="text" onKeyDown={(event) => {if(event.which == 13){this._handleRegister()}}} ref="name" name="name"/>
+								<input value={this.state.name} type="text" onKeyDown={(event) => {if(event.which == 13){this._handleRegister()}}} ref="name" name="name" onChange={this.inputVal}/>
 								</div>
 								<div className="col-md-4">
 								<center>Email :</center>
 								</div>
 								<div className="col-md-8">
-								<input type="text" onKeyDown={(event) => {if(event.which == 13){this._handleRegister()}}} ref="email" name="email"/>
+								<input value={this.state.email} type="text" onKeyDown={(event) => {if(event.which == 13){this._handleRegister()}}} ref="email" name="email" onChange={this.inputVal}/>
 								</div>
 								<div className="col-md-4">
 								<center>Password :</center>
@@ -112,7 +149,7 @@ class Home extends Component {
 								&nbsp;
 								</div>
 								<div className="col-md-8">
-								<button className="btn btn-primary" onClick={this._handleRegister} type="button">Register</button>
+								<button className="btn btn-primary" onClick={this._handleUpdate} type="button">Update</button>
 								</div>
 							</div>
 						</div>
@@ -127,4 +164,4 @@ class Home extends Component {
 			);
 	}
 } 
-export default Home;
+export default Edit;

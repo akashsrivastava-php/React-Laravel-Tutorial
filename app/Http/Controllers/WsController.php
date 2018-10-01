@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\ws;
 use Illuminate\Http\Request;
 use validator;
+use Hash;
 
 class WsController extends Controller
 {
@@ -21,7 +22,7 @@ class WsController extends Controller
         $pass = $req->pass;
 
         $getEmail = ws::where('email', $email)->get()->first();
-        if($getEmail->password == $pass){
+        if(Hash::check($pass, $getEmail->password)){
             $getEmail['status'] = "success"; 
             return response()->json($getEmail, 201);        
         }else{
@@ -44,7 +45,7 @@ class WsController extends Controller
         $data = array(
 
             'email' => $request->email,
-            'password' =>$request->pass,
+            'password' =>Hash::make($request->pass),
             'name' => $request->name
 
             );
@@ -53,7 +54,7 @@ class WsController extends Controller
 
         if($reg->id){
 
-            $data = array('status'=>'success', 'response'=>'view');
+            $data = array('status'=>'success', 'response'=>'view', 'message'=>'User added successfully!');
 
             return response()->json($data, 201);
 
@@ -69,7 +70,7 @@ class WsController extends Controller
 
     public function view(Request $request){
 
-        $response = ws::all();
+        $response = ws::limit(10)->get();
 
         $data = array('status'=>'success', 'response'=>$response);
 
@@ -100,7 +101,7 @@ class WsController extends Controller
     public function update(Request $request){
 
         $this->validate($request, [
-            'email' => 'required|unique:users,email,'.$request->id[0],
+            'email' => 'required|email|unique:users,email,'.$request->id[0],
             'id' => 'required',
             'name' => 'required',
         ]);
@@ -113,16 +114,16 @@ class WsController extends Controller
 
             $data = array(
 
-                'name' => $name[0],
-                'email' => $email[0],
-                'password' => $pass[0]
+                'name' => $name,
+                'email' => $email,
+                'password' => Hash::make($pass)
 
                 );
 
-            $update = ws::where('id', $request->id)
+            $update = ws::where('id', $request->id[0])
                             ->update($data);
 
-            $response = array('status'=>'success', 'response'=>'');
+            $response = array('status'=>'success', 'response'=>'', 'message'=>'User updated successfully!');
 
             return response()->json($response, 200);
 
@@ -135,10 +136,10 @@ class WsController extends Controller
 
                 );
 
-            $update = ws::where('id', $request->id)
+            $update = ws::where('id', $request->id[0])
                             ->update($data);
 
-            $response = array('status'=>'success', 'response'=>'');
+            $response = array('status'=>'success', 'response'=>'', 'message'=>'User updated successfully!');
 
             return response()->json($response, 200);
 

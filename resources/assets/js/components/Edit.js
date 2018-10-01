@@ -12,7 +12,10 @@ class Edit extends Component {
 			err : '',
 			error: {},
 			name: '',
-			email: ''
+			email: '',
+			emailErr: '',
+			nameErr: '',
+			passErr: '',
 		}
 
 	this._handleLogout = this._handleLogout.bind(this);
@@ -56,7 +59,8 @@ class Edit extends Component {
 					this.props.history.push('/home');
 
 			} else {
-				this.setState({err:response.message});
+				this.setState({emailErr:response.errors['email']});
+				this.setState({nameErr:response.errors['name']});
 			}
 			return Promise.resolve();
 		})
@@ -132,12 +136,14 @@ class Edit extends Component {
 								</div>
 								<div className="col-md-8">
 								<input value={this.state.name} type="text" onKeyDown={(event) => {if(event.which == 13){this._handleRegister()}}} ref="name" name="name" onChange={this.inputVal}/>
+								<p>{this.state.nameErr}</p>
 								</div>
 								<div className="col-md-4">
 								<center>Email :</center>
 								</div>
 								<div className="col-md-8">
 								<input value={this.state.email} type="text" onKeyDown={(event) => {if(event.which == 13){this._handleRegister()}}} ref="email" name="email" onChange={this.inputVal}/>
+								<p>{this.state.emailErr}</p>
 								</div>
 								<div className="col-md-4">
 								<center>Password :</center>

@@ -12,6 +12,7 @@ class View extends Component {
 			err : '',
 			error: {},
 			users: [],
+			msg: '',
 		}
 
 	this._handleLogout = this._handleLogout.bind(this);
@@ -39,6 +40,7 @@ class View extends Component {
 		.then((response)=>{
 			if(response.status !== undefined && response.status == "success") {
 					this.setState({users:response.response});
+					this.setState({msg:response.message});
 
 			} else {
 				this.setState({err:response.message});
@@ -49,7 +51,21 @@ class View extends Component {
 
 	}
 
-	_handleDelete(id){
+	shouldComponentUpdate(nextState){
+
+		return true;
+
+	}
+
+	_handleDelete(id, key){
+
+		var userArray = this.state.users;
+
+		console.log(userArray);
+
+		userArray.splice(key, 1);
+
+		this.setState({users:userArray});
 
 		const token = $("#csrf_token").attr('content');
 
@@ -75,7 +91,7 @@ class View extends Component {
 			if(response.status !== undefined && response.status == "success") {
 					//console.log(response.response);
 					//this.props.history.push('/home');
-					window.location.reload();
+					//window.location.reload();
 
 			} else {
 				this.setState({err:response.message});
@@ -102,6 +118,8 @@ class View extends Component {
 				<br/>
 
 				<div className="container row col-md-12">
+				{this.state.msg}
+				{this.state.err}
 					<div className="col-md-3">
 					</div>
 					<div className="col-md-6">
@@ -117,7 +135,13 @@ class View extends Component {
 									</tr>
 								</thead>
 								<tbody>
-									{this.state.users.map((elm, id)=><Users key={id} id={id} props={this.props} user={elm}/>)}
+									{this.state.users.map((elm, id)=>(
+										<tr>
+											<td>{id+1}</td>
+											<td>{elm.name}</td>
+											<td>{elm.email}</td>
+											<td><button type="button" onClick={()=>{this.props.history.push('/edit/'+this.props.user.id)}}>Edit</button>&nbsp;<button type="button" onClick={()=>{this._handleDelete(elm.id, id)}}>Delete</button></td>
+										</tr>))}
 								</tbody>
 							</table>
 						</div>
@@ -133,22 +157,4 @@ class View extends Component {
 	}
 }
 
-class Users extends View{
-
-render(){
-
-return(
-
-	<tr>
-		<td>{this.props.id+1}</td>
-		<td>{this.props.user.name}</td>
-		<td>{this.props.user.email}</td>
-		<td><button type="button" onClick={()=>{this.props.props.history.push('/edit/'+this.props.user.id)}}>Edit</button>&nbsp;<button type="button" onClick={()=>{this._handleDelete(this.props.user.id)}}>Delete</button></td>
-	</tr>
-
-	);
-
-}
-
-}
 export default View;

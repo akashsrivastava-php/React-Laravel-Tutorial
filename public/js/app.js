@@ -60333,7 +60333,8 @@ var View = function (_Component) {
 		_this.state = {
 			err: '',
 			error: {},
-			users: []
+			users: [],
+			msg: ''
 		};
 
 		_this._handleLogout = _this._handleLogout.bind(_this);
@@ -60362,6 +60363,7 @@ var View = function (_Component) {
 			__WEBPACK_IMPORTED_MODULE_3_isomorphic_fetch___default()(__WEBPACK_IMPORTED_MODULE_4__authentication_auth_js__["b" /* httpUrl */] + '/view', options).then(__WEBPACK_IMPORTED_MODULE_4__authentication_auth_js__["e" /* parseJSON */]).then(function (response) {
 				if (response.status !== undefined && response.status == "success") {
 					_this2.setState({ users: response.response });
+					_this2.setState({ msg: response.message });
 				} else {
 					_this2.setState({ err: response.message });
 				}
@@ -60369,9 +60371,23 @@ var View = function (_Component) {
 			});
 		}
 	}, {
+		key: 'shouldComponentUpdate',
+		value: function shouldComponentUpdate(nextState) {
+
+			return true;
+		}
+	}, {
 		key: '_handleDelete',
-		value: function _handleDelete(id) {
+		value: function _handleDelete(id, key) {
 			var _this3 = this;
+
+			var userArray = this.state.users;
+
+			console.log(userArray);
+
+			userArray.splice(key, 1);
+
+			this.setState({ users: userArray });
 
 			var token = $("#csrf_token").attr('content');
 
@@ -60395,7 +60411,8 @@ var View = function (_Component) {
 				if (response.status !== undefined && response.status == "success") {
 					//console.log(response.response);
 					//this.props.history.push('/home');
-					window.location.reload();
+					//window.location.reload();
+
 				} else {
 					_this3.setState({ err: response.message });
 				}
@@ -60441,6 +60458,8 @@ var View = function (_Component) {
 				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 					'div',
 					{ className: 'container row col-md-12' },
+					this.state.msg,
+					this.state.err,
 					__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', { className: 'col-md-3' }),
 					__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 						'div',
@@ -60486,7 +60505,44 @@ var View = function (_Component) {
 										'tbody',
 										null,
 										this.state.users.map(function (elm, id) {
-											return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(Users, { key: id, id: id, props: _this4.props, user: elm });
+											return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+												'tr',
+												null,
+												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+													'td',
+													null,
+													id + 1
+												),
+												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+													'td',
+													null,
+													elm.name
+												),
+												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+													'td',
+													null,
+													elm.email
+												),
+												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+													'td',
+													null,
+													__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+														'button',
+														{ type: 'button', onClick: function onClick() {
+																_this4.props.history.push('/edit/' + _this4.props.user.id);
+															} },
+														'Edit'
+													),
+													'\xA0',
+													__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+														'button',
+														{ type: 'button', onClick: function onClick() {
+																_this4._handleDelete(elm.id, id);
+															} },
+														'Delete'
+													)
+												)
+											);
 										})
 									)
 								)
@@ -60501,64 +60557,6 @@ var View = function (_Component) {
 
 	return View;
 }(__WEBPACK_IMPORTED_MODULE_0_react__["Component"]);
-
-var Users = function (_View) {
-	_inherits(Users, _View);
-
-	function Users() {
-		_classCallCheck(this, Users);
-
-		return _possibleConstructorReturn(this, (Users.__proto__ || Object.getPrototypeOf(Users)).apply(this, arguments));
-	}
-
-	_createClass(Users, [{
-		key: 'render',
-		value: function render() {
-			var _this6 = this;
-
-			return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-				'tr',
-				null,
-				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-					'td',
-					null,
-					this.props.id + 1
-				),
-				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-					'td',
-					null,
-					this.props.user.name
-				),
-				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-					'td',
-					null,
-					this.props.user.email
-				),
-				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-					'td',
-					null,
-					__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-						'button',
-						{ type: 'button', onClick: function onClick() {
-								_this6.props.props.history.push('/edit/' + _this6.props.user.id);
-							} },
-						'Edit'
-					),
-					'\xA0',
-					__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-						'button',
-						{ type: 'button', onClick: function onClick() {
-								_this6._handleDelete(_this6.props.user.id);
-							} },
-						'Delete'
-					)
-				)
-			);
-		}
-	}]);
-
-	return Users;
-}(View);
 
 /* harmony default export */ __webpack_exports__["a"] = (View);
 
@@ -60604,7 +60602,10 @@ var Edit = function (_Component) {
 			err: '',
 			error: {},
 			name: '',
-			email: ''
+			email: '',
+			emailErr: '',
+			nameErr: '',
+			passErr: ''
 		};
 
 		_this._handleLogout = _this._handleLogout.bind(_this);
@@ -60650,7 +60651,8 @@ var Edit = function (_Component) {
 					//console.log(response.response);
 					_this2.props.history.push('/home');
 				} else {
-					_this2.setState({ err: response.message });
+					_this2.setState({ emailErr: response.errors['email'] });
+					_this2.setState({ nameErr: response.errors['name'] });
 				}
 				return Promise.resolve();
 			});
@@ -60763,7 +60765,12 @@ var Edit = function (_Component) {
 												if (event.which == 13) {
 													_this4._handleRegister();
 												}
-											}, ref: 'name', name: 'name', onChange: this.inputVal })
+											}, ref: 'name', name: 'name', onChange: this.inputVal }),
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'p',
+											null,
+											this.state.nameErr
+										)
 									),
 									__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 										'div',
@@ -60781,7 +60788,12 @@ var Edit = function (_Component) {
 												if (event.which == 13) {
 													_this4._handleRegister();
 												}
-											}, ref: 'email', name: 'email', onChange: this.inputVal })
+											}, ref: 'email', name: 'email', onChange: this.inputVal }),
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'p',
+											null,
+											this.state.emailErr
+										)
 									),
 									__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 										'div',

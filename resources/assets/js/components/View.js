@@ -140,7 +140,7 @@ class View extends Component {
 											<td>{id+1}</td>
 											<td>{elm.name}</td>
 											<td>{elm.email}</td>
-											<td><button type="button" onClick={()=>{this.props.history.push('/edit/'+this.props.user.id)}}>Edit</button>&nbsp;<button type="button" onClick={()=>{this._handleDelete(elm.id, id)}}>Delete</button></td>
+											<td><button type="button" onClick={()=>{this.props.history.push('/edit/'+elm.id)}}>Edit</button>&nbsp;<button type="button" onClick={()=>{this._handleDelete(elm.id, id)}}>Delete</button></td>
 										</tr>))}
 								</tbody>
 							</table>

@@ -60529,7 +60529,7 @@ var View = function (_Component) {
 													__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 														'button',
 														{ type: 'button', onClick: function onClick() {
-																_this4.props.history.push('/edit/' + _this4.props.user.id);
+																_this4.props.history.push('/edit/' + elm.id);
 															} },
 														'Edit'
 													),

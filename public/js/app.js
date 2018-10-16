@@ -60334,15 +60334,29 @@ var View = function (_Component) {
 			err: '',
 			error: {},
 			users: [],
-			msg: ''
+			msg: '',
+			initialUsers: []
 		};
 
 		_this._handleLogout = _this._handleLogout.bind(_this);
 		_this._handleDelete = _this._handleDelete.bind(_this);
+		_this.filter = _this.filter.bind(_this);
 		return _this;
 	}
 
 	_createClass(View, [{
+		key: 'filter',
+		value: function filter(event) {
+
+			var initialData = this.state.initialUsers;
+
+			var updatedList = initialData;
+			updatedList = updatedList.filter(function (item) {
+				return item.name.toLowerCase().search(event.target.value.toLowerCase()) !== -1;
+			});
+			this.setState({ users: updatedList });
+		}
+	}, {
 		key: 'componentWillMount',
 		value: function componentWillMount() {
 			var _this2 = this;
@@ -60363,6 +60377,7 @@ var View = function (_Component) {
 			__WEBPACK_IMPORTED_MODULE_3_isomorphic_fetch___default()(__WEBPACK_IMPORTED_MODULE_4__authentication_auth_js__["b" /* httpUrl */] + '/view', options).then(__WEBPACK_IMPORTED_MODULE_4__authentication_auth_js__["e" /* parseJSON */]).then(function (response) {
 				if (response.status !== undefined && response.status == "success") {
 					_this2.setState({ users: response.response });
+					_this2.setState({ initialUsers: response.response });
 					_this2.setState({ msg: response.message });
 				} else {
 					_this2.setState({ err: response.message });
@@ -60460,6 +60475,17 @@ var View = function (_Component) {
 					{ className: 'container row col-md-12' },
 					this.state.msg,
 					this.state.err,
+					__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+						'div',
+						{ className: 'col-md-12' },
+						__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', { className: 'col-md-3' }),
+						__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+							'div',
+							{ className: 'col-md-6' },
+							__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { placeholder: 'Search by name', type: 'text', style: { width: '510px', align: 'center' }, onChange: this.filter })
+						),
+						__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', { className: 'col-md-3' })
+					),
 					__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', { className: 'col-md-3' }),
 					__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 						'div',

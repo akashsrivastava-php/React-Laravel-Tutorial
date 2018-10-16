@@ -13,10 +13,26 @@ class View extends Component {
 			error: {},
 			users: [],
 			msg: '',
+			initialUsers: [],
 		}
 
 	this._handleLogout = this._handleLogout.bind(this);
 	this._handleDelete = this._handleDelete.bind(this);
+	this.filter = this.filter.bind(this);
+	}
+
+
+	filter(event){
+
+		var initialData = this.state.initialUsers;
+
+		var updatedList = initialData;
+	    updatedList = updatedList.filter(function(item){
+	      return item.name.toLowerCase().search(
+	        event.target.value.toLowerCase()) !== -1;
+	    });
+	    this.setState({users: updatedList});
+
 	}
 
 	componentWillMount(){
@@ -40,6 +56,7 @@ class View extends Component {
 		.then((response)=>{
 			if(response.status !== undefined && response.status == "success") {
 					this.setState({users:response.response});
+					this.setState({initialUsers:response.response});
 					this.setState({msg:response.message});
 
 			} else {
@@ -120,6 +137,14 @@ class View extends Component {
 				<div className="container row col-md-12">
 				{this.state.msg}
 				{this.state.err}
+
+				<div className="col-md-12">
+				<div className="col-md-3">
+					</div>
+				<div className="col-md-6"><input placeholder="Search by name" type="text" style={{width : '510px', align : 'center'}} onChange={this.filter}/></div>
+					<div className="col-md-3">
+					</div>
+					</div>
 					<div className="col-md-3">
 					</div>
 					<div className="col-md-6">

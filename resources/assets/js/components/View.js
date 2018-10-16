@@ -28,7 +28,7 @@ class View extends Component {
 
 		var updatedList = initialData;
 	    updatedList = updatedList.filter(function(item){
-	      return item.name.toLowerCase().search(
+	      return (item.name+item.email).toLowerCase().search(
 	        event.target.value.toLowerCase()) !== -1;
 	    });
 	    this.setState({users: updatedList});
@@ -141,7 +141,7 @@ class View extends Component {
 				<div className="col-md-12">
 				<div className="col-md-3">
 					</div>
-				<div className="col-md-6"><input placeholder="Search by name" type="text" style={{width : '510px', align : 'center'}} onChange={this.filter}/></div>
+				<div className="col-md-6"><input placeholder="Search by Name or Email" type="text" style={{width : '510px', align : 'center'}} onChange={this.filter}/></div>
 					<div className="col-md-3">
 					</div>
 					</div>

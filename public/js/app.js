@@ -60352,7 +60352,7 @@ var View = function (_Component) {
 
 			var updatedList = initialData;
 			updatedList = updatedList.filter(function (item) {
-				return item.name.toLowerCase().search(event.target.value.toLowerCase()) !== -1;
+				return (item.name + item.email).toLowerCase().search(event.target.value.toLowerCase()) !== -1;
 			});
 			this.setState({ users: updatedList });
 		}
@@ -60482,7 +60482,7 @@ var View = function (_Component) {
 						__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 							'div',
 							{ className: 'col-md-6' },
-							__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { placeholder: 'Search by name', type: 'text', style: { width: '510px', align: 'center' }, onChange: this.filter })
+							__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { placeholder: 'Search by Name or Email', type: 'text', style: { width: '510px', align: 'center' }, onChange: this.filter })
 						),
 						__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', { className: 'col-md-3' })
 					),
